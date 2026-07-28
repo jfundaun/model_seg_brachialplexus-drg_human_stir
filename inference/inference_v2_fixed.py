@@ -5,24 +5,6 @@ Cascaded nnUNet Inference: DRG + Brachial Plexus Segmentation
 Stage 1: Dataset201 (coarse, single-channel T2 input)
 Stage 2: Dataset202 (fine 16-class, 2-channel: T2 + coarse seg)
 
-FIXES vs inference_v2_fixed.py / inference_cascade.py (identical scripts):
-  1. FOLDS = [0,1,2,3,4]  -- was hardcoded FOLD = 0 (single fold only,
-     discarding the other 4 trained folds / ensemble benefit).
-  2. NNUNET_RESULTS now points at Sherlock's live results dir
-     (/scratch/users/jfundaun/bpseg/nnunet_cascade/results), which
-     contains the newly-retrained 324-case Dataset201 + Dataset202
-     checkpoints (all 5 folds, confirmed present as of 18 June 2026).
-     Previously hardcoded to a stale LOCAL-SERVER path
-     (results_20260225_075741), which would have overwritten the
-     correct nnUNet_results env var set by run_inference_final.sh,
-     causing the script to look for checkpoints that don't exist
-     on Sherlock at all.
-
-IMPORTANT - label sources:
-  Images:    Dataset201/imagesTr  +  imagesTs   (single-channel T2)
-  GT labels: Dataset202/labelsTr  +  labelsTs   (fine 16-class labels)
-  DO NOT evaluate against Dataset201 labels -- those are COARSE (wrong classes).
-
 Usage:
     python inference_v2_fixed.py --subset all \\
         --output /scratch/users/jfundaun/bpseg/derivatives/cascade_results_final/19June2026
@@ -63,7 +45,6 @@ D201_IMG_TR = f"{D201}/imagesTr"
 D201_IMG_TS = f"{D201}/imagesTs"
 
 # Dataset202: fine 16-class GT labels for evaluation
-# DO NOT use Dataset201 labels -- those are coarse and won't match fine predictions
 D202        = f"{NNUNET_RAW}/Dataset202_DRGPlexusFine"
 D202_LBL_TR = f"{D202}/labelsTr"
 D202_LBL_TS = f"{D202}/labelsTs"
@@ -90,7 +71,6 @@ PLEXUS_CLASSES = list(range(9, 17))
 # ============================================================
 # ENVIRONMENT
 # ============================================================
-
 def set_nnunet_env():
     os.environ["nnUNet_raw"]          = NNUNET_RAW
     os.environ["nnUNet_preprocessed"] = NNUNET_PREPROC
@@ -100,7 +80,6 @@ def set_nnunet_env():
 # ============================================================
 # FILE HELPERS
 # ============================================================
-
 def is_gzip(path):
     try:
         with open(path, "rb") as f:
@@ -143,7 +122,6 @@ def is_placeholder_seg(seg_path):
 # ============================================================
 # COLLECT CASES  --  original nnUNet-raw-dir mode
 # ============================================================
-
 def collect_cases(subset="all"):
     cases = []
     sources = []
@@ -175,7 +153,6 @@ def collect_cases(subset="all"):
 # ============================================================
 # COLLECT CASES  --  data-dictionary CSV mode
 # ============================================================
-
 ALL_CSV_SUBSETS = {"train", "test", "validation", "unlabeled"}
 
 
@@ -247,7 +224,6 @@ def run_nnunet_predict(input_dir, output_dir, dataset_id):
 # ============================================================
 # METRICS
 # ============================================================
-
 def vox_vol_mm3(img):
     return float(np.prod(img.header.get_zooms()[:3]))
 
@@ -342,7 +318,6 @@ def summarise(per_class):
 # ============================================================
 # MAIN CASCADE
 # ============================================================
-
 def run_cascade(cases, output_dir):
     set_nnunet_env()
     os.makedirs(output_dir, exist_ok=True)
@@ -523,7 +498,6 @@ def run_cascade(cases, output_dir):
 # ============================================================
 # CLI
 # ============================================================
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Cascaded nnUNet inference: DRG + Brachial Plexus")
