@@ -7,7 +7,7 @@ Stage 2: Dataset202 (fine 16-class, 2-channel: T2 + coarse seg)
 
 Usage:
     python inference_v2_fixed.py --subset all \\
-        --output /scratch/users/jfundaun/bpseg/derivatives/cascade_results_final/19June2026
+        --output /file/path/here
 """
 
 import os
