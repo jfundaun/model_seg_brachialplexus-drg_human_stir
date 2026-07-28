@@ -1,0 +1,72 @@
+#!/bin/bash
+# =============================================================
+# submit_pipeline_v2.sh
+#
+# Full retraining pipeline chained with SLURM dependencies:
+#
+#   run_prepare_data.sh  (rebuild raw/ from fresh CSV + seg files)
+#       └─> preproc_201_v2.sh  (self-checking Dataset201 preprocessing)
+#               └─> train_201_fold.sh  (array 0-4, 48h, Ampere-only)
+#                       └─> phase2_v2.sh  (crossval preds + ch1 update
+#                                          + Dataset202 preprocessing)
+#                               └─> train_202_fold.sh  (array 0-4, 48h)
+#
+# Dataset: 314 train / 42 test
+#
+# Run from: /scratch/users/jfundaun/bpseg/scripts/final_complete_18april2026
+# Usage:
+#   bash submit_pipeline_v2.sh
+# =============================================================
+
+set -euo pipefail
+
+cd /scratch/users/jfundaun/bpseg/scripts/final_complete_18april2026
+
+echo "=================================================="
+echo "  Submitting full retraining pipeline"
+echo "  Dataset: 314 train / 42 test"
+echo "=================================================="
+
+JOB_PREP=$(sbatch --parsable run_prepare_data.sh)
+echo "  [0] run_prepare_data.sh   -> job ${JOB_PREP}"
+
+JOB_PREPROC_201=$(sbatch --parsable \
+    --dependency=afterok:${JOB_PREP} \
+    preproc_201_v2.sh)
+echo "  [1] preproc_201_v2.sh     -> job ${JOB_PREPROC_201}"
+echo "        depends on: afterok:${JOB_PREP}"
+
+JOB_TRAIN_201=$(sbatch --parsable \
+    --dependency=afterok:${JOB_PREPROC_201} \
+    train_201_fold.sh)
+echo "  [2] train_201_fold.sh     -> job ${JOB_TRAIN_201} (array 0-4, 48h, AMP)"
+echo "        depends on: afterok:${JOB_PREPROC_201}"
+
+JOB_PHASE2=$(sbatch --parsable \
+    --dependency=afterok:${JOB_TRAIN_201} \
+    phase2_v2.sh)
+echo "  [3] phase2_v2.sh          -> job ${JOB_PHASE2}"
+echo "        depends on: afterok:${JOB_TRAIN_201} (all folds)"
+
+JOB_TRAIN_202=$(sbatch --parsable \
+    --dependency=afterok:${JOB_PHASE2} \
+    train_202_fold.sh)
+echo "  [4] train_202_fold.sh     -> job ${JOB_TRAIN_202} (array 0-4, 48h, AMP)"
+echo "        depends on: afterok:${JOB_PHASE2}"
+
+echo ""
+echo "=================================================="
+echo "  All jobs submitted."
+echo ""
+echo "  Job IDs:"
+echo "    prepare_data   : ${JOB_PREP}"
+echo "    preproc_201_v2 : ${JOB_PREPROC_201}"
+echo "    train_201      : ${JOB_TRAIN_201}"
+echo "    phase2_v2      : ${JOB_PHASE2}"
+echo "    train_202      : ${JOB_TRAIN_202}"
+echo ""
+echo "  Monitor with:"
+echo "    squeue --me"
+echo "    sacct -j ${JOB_PREP},${JOB_PREPROC_201},${JOB_TRAIN_201},${JOB_PHASE2},${JOB_TRAIN_202} \\"
+echo "      --format=JobID,JobName%20,State,ExitCode,Elapsed,Start,End"
+echo "=================================================="
