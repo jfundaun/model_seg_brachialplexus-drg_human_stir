@@ -4,14 +4,6 @@ Replace Dataset202 channel 1 (_0001) files with Stage 1 cross-val predictions.
 =================================================================================
 Run this AFTER cascade_pipeline.sh Step 1 has generated merged Stage 1 preds.
 Run BEFORE nnUNetv2_preprocess -d 202.
-
-ALL FIXES vs previous versions:
-  1. Exact name matching before fuzzy glob — prevents wrong-subject assignment
-  2. Float corruption fix: scl_slope/scl_inter zeroed on all saved files
-  3. RAS+ reorientation of Stage 1 pred before resampling to MRI space
-  4. Backup of original channel 1 files before overwrite
-  5. Per-file integrity verification after save
-  6. Summary flags cases that kept GT coarse (train/inference mismatch risk)
 """
 
 import os
@@ -31,8 +23,6 @@ BASE     = "/scratch/users/jfundaun/bpseg/nnunet_cascade/raw/Dataset202_DRGPlexu
 PRED_DIR = "/scratch/users/jfundaun/bpseg/derivatives/stage1_crossval_preds/merged"
 BACKUP_DIR = "/scratch/users/jfundaun/bpseg/derivatives/channel1_backup_gt_coarse"
 # ============================================================
-
-
 def reorient_to_ras(img):
     """Reorient to RAS+ canonical orientation."""
     return nib.as_closest_canonical(img)
