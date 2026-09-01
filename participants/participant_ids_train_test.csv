@@ -191,8 +191,8 @@ CISC36720,train,brighton
 CISC37509,train,brighton
 CISC9189,train,brighton
 CS_trial_1,train,stanford
-Sbj006b_T2W_DRG_001,train,eva
-Sbj043a_T2W_DRG_001,train,eva
+Sbj006b_T2W_DRG_001,train,oxford_cts
+Sbj043a_T2W_DRG_001,train,oxford_cts
 sub-DMAim1HC001,train,stanford
 sub-DMAim1HC002,train,stanford
 sub-DMAim1HC003,train,stanford
