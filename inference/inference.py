@@ -54,7 +54,7 @@ PLANS         = "nnUNetResEncUNetMPlans"
 CONFIGURATION = "3d_fullres"
 FOLDS         = [0, 1, 2, 3, 4]   # all 5 folds -- full ensemble
 
-# Placeholder seg path used in the CSV for truly unlabeled cases.
+# Placeholder seg path 
 PLACEHOLDER_SEG = "003_032_seg.nii"
 
 FINE_LABEL_NAMES = {
@@ -337,9 +337,6 @@ def run_cascade(cases, output_dir):
     print(f"  Folds used: {FOLDS}")
     print(f"{'='*65}")
 
-    # Persistent work dir (was tempfile.TemporaryDirectory, which was deleted
-    # when SLURM killed the job on timeout -- losing all completed predictions).
-    # Combined with --continue_prediction this makes inference fully resumable.
     tmp = os.path.join(output_dir, "_work")
     os.makedirs(tmp, exist_ok=True)
     print(f"  Work dir (persistent, resumable): {tmp}")
@@ -371,10 +368,8 @@ def run_cascade(cases, output_dir):
                 continue
             ch0_path = os.path.join(s2_in, f"{cid}_0000.nii.gz")
             safe_save_as_nii_gz(img_path, ch0_path)
-            # Load channel-0 back to get its EXACT on-disk header/affine.
-            # Forcing channel-1 to inherit these (rather than pred1's own
-            # header) avoids the float-precision pixdim drift that nnUNet's
-            # exact spacing comparison rejects (e.g. 0.4 vs 0.39999586).
+
+            
             ch0_img = nib.load(ch0_path)
             pred1 = nib.load(coarse_path)
             coarse_labels = np.unique(pred1.get_fdata().astype(int)).tolist()
