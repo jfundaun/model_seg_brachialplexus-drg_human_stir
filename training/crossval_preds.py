@@ -67,7 +67,7 @@ for fold_k in range(len(splits)):
         shutil.copy2(p, FINAL)
     print(f"  Copied {len(glob.glob(f'{fold_out}/*.nii.gz'))} preds to merged")
 
-# Test set — all available folds, no leakage risk
+# Test set — all available folds
 n_ts = len(glob.glob(f"{IMG_TS}/*_0000.nii.gz"))
 print(f"\nTest set ({n_ts} cases) -> predict with folds {available_folds}")
 test_out = f"{OUT_BASE}/test_output"
