@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Cascaded nnUNet Data Preparation for DRG + Brachial Plexus Segmentation
-Fixed version - see inline comments for all bug fixes.
+
 Usage:
   # Initial prep (GT coarse labels as channel 1):
   python prepare_nnunet_data.py
@@ -18,8 +18,8 @@ import nibabel as nib
 from pathlib import Path
 from scipy.ndimage import map_coordinates
 
-CSV_PATH    = "/scratch/users/jfundaun/bpseg/training_split_2026_final.csv"
-NNUNET_BASE = "/scratch/users/jfundaun/bpseg/nnunet_cascade"
+CSV_PATH    = "/.../bpseg.csv"
+NNUNET_BASE = "/.../nnunet_cascade"
 
 DATASET_201_NAME = "Dataset201_DRGPlexusCoarse"
 DATASET_202_NAME = "Dataset202_DRGPlexusFine"
@@ -163,11 +163,9 @@ def main():
     print("="*65)
 
     df = pd.read_csv(args.csv)
-    # FIX: normalize subset - handles "trains" typo
     df["subset"] = df["subset"].astype(str).str.strip().str.lower().replace("trains","train")
     print(f"Subsets: {df['subset'].value_counts().to_dict()}")
 
-    # FIX: ID collision check
     df["nnunet_id"] = df["vol_path"].apply(get_subject_id)
     dupes = df[df["nnunet_id"].duplicated(keep=False)]
     if len(dupes):
