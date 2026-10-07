@@ -1,18 +1,18 @@
 #!/bin/bash
 #SBATCH --job-name=preproc_201_v2
-#SBATCH --output=/scratch/users/jfundaun/bpseg/logs/preproc_201_v2_%j.log
-#SBATCH --error=/scratch/users/jfundaun/bpseg/logs/preproc_201_v2_%j.err
+#SBATCH --output=/.../logs/preproc_201_v2_%j.log
+#SBATCH --error=/.../preproc_201_v2_%j.err
 #SBATCH --partition=gpu
-#SBATCH --account=smackey
+#SBATCH --account=X
 #SBATCH --mem=32G
 #SBATCH --gres=gpu:1
 #SBATCH --time=4:00:00
 #SBATCH --cpus-per-task=8
 
 set -euo pipefail
-export nnUNet_raw="/scratch/users/jfundaun/bpseg/nnunet_cascade/raw"
-export nnUNet_preprocessed="/scratch/users/jfundaun/bpseg/nnunet_cascade/preprocessed"
-export nnUNet_results="/scratch/users/jfundaun/bpseg/nnunet_cascade/results"
+export nnUNet_raw="/.../nnunet_cascade/raw"
+export nnUNet_preprocessed="/.../nnunet_cascade/preprocessed"
+export nnUNet_results="/.../nnunet_cascade/results"
 
 DS_DIR="${nnUNet_preprocessed}/Dataset201_DRGPlexusCoarse"
 RAW_JSON="${nnUNet_raw}/Dataset201_DRGPlexusCoarse/dataset.json"
