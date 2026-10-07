@@ -5,19 +5,6 @@ infer_clinical_single_fast.py
 Cascaded nnUNet inference (Dataset201 coarse -> Dataset202 fine, 16-class
 DRG + Brachial Plexus) for a single clinical NIfTI image.
 
-Faster rewrite of infer_clinical_single.py. Behaviour and outputs are
-identical; the speed comes from:
-
-  1. Python API (nnUNetPredictor) instead of subprocess nnUNetv2_predict.
-     The two predictors are built ONCE, so there is no repeated model load
-     and the case loop (see bottom) scales cleanly to a whole cohort.
-  2. TTA (mirroring) OFF by default        -> up to ~8x on the forward pass.
-  3. Fold ensemble configurable            -> coarse single fold by default,
-     fine 3 folds by default (was 5+5).
-  4. tile_step_size 0.7 instead of 0.5     -> fewer overlapping tiles.
-  5. Lightweight fold check (existence)    -> no redundant torch.load of all
-     checkpoints just to validate them.
-
 PRESETS (choose with --preset; individual flags override):
   reference : coarse=0-4, fine=0-4, TTA on,  step 0.5   (reproduces original)
   balanced  : coarse=0,   fine=0-2, TTA off, step 0.7   (default)
@@ -174,7 +161,7 @@ def set_nnunet_env(raw_dir, preproc_dir):
 
 
 # ============================================================
-# NIFTI / ORIENTATION HELPERS  (unchanged from original)
+# NIFTI / ORIENTATION HELPERS 
 # ============================================================
 
 def stage_image(src, dst):
@@ -219,7 +206,7 @@ def sanitize_case_id(filename):
 
 
 # ============================================================
-# BILATERAL LATERALIZATION  (unchanged from original)
+# BILATERAL LATERALIZATION
 # ============================================================
 
 def lateralize_bilateral_structures(seg_data, affine):
@@ -464,7 +451,7 @@ def main():
 
     device = get_device(args.device)
 
-    # temp env dirs (nnUNet reads these on import in some versions)
+    # temp env dirs
     with tempfile.TemporaryDirectory(prefix="nnunet_env_") as env_str:
         env = Path(env_str)
         raw_dir     = env / "raw";     raw_dir.mkdir()
@@ -491,7 +478,7 @@ def main():
         # ---- single case ----
         process_case(args.input, args.output, predictor_coarse, predictor_fine)
 
-        # ---- cohort loop (uncomment; predictors are already built ONCE) ----
+        # ---- cohort loop (uncomment; predictors are already built once) ----
         # cases = [
         #     ("/.../nifti/CASE1/img.nii.gz", "/.../derivatives/CASE1"),
         #     ("/.../nifti/CASE2/img.nii.gz", "/.../derivatives/CASE2"),
