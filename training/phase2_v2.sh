@@ -1,23 +1,23 @@
 #!/bin/bash
 #SBATCH --job-name=phase2_v2
-#SBATCH --output=/scratch/users/jfundaun/bpseg/logs/phase2_v2_%j.log
-#SBATCH --error=/scratch/users/jfundaun/bpseg/logs/phase2_v2_%j.err
+#SBATCH --output=/.../logs/phase2_v2_%j.log
+#SBATCH --error=/.../logs/phase2_v2_%j.err
 #SBATCH --partition=gpu
-#SBATCH --account=smackey
+#SBATCH --account=X
 #SBATCH --mem=48G
 #SBATCH --gres=gpu:1
 #SBATCH --time=16:00:00
 #SBATCH --cpus-per-task=8
 
 set -euo pipefail
-export nnUNet_raw="/scratch/users/jfundaun/bpseg/nnunet_cascade/raw"
-export nnUNet_preprocessed="/scratch/users/jfundaun/bpseg/nnunet_cascade/preprocessed"
-export nnUNet_results="/scratch/users/jfundaun/bpseg/nnunet_cascade/results"
+export nnUNet_raw="/.../nnunet_cascade/raw"
+export nnUNet_preprocessed="/.../nnunet_cascade/preprocessed"
+export nnUNet_results="/.../nnunet_cascade/results"
 
 RESULTS_201="${nnUNet_results}/Dataset201_DRGPlexusCoarse/nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres"
-CROSSVAL_DIR="/scratch/users/jfundaun/bpseg/derivatives/stage1_crossval_preds"
+CROSSVAL_DIR="/.../derivatives/stage1_crossval_preds"
 MERGED_DIR="${CROSSVAL_DIR}/merged"
-SCRIPTS_DIR="/scratch/users/jfundaun/bpseg/scripts/final_complete_18april2026"
+SCRIPTS_DIR="/X "
 MIN_FOLDS=3
 
 echo "=== Phase 2 (v2) start: $(date) ==="
