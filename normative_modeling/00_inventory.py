@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 """
-For each subject, uses the manual/expert segmentation (nnU-Net labelsTr/labelsTs)
-if one exists -- that's what the model was trained/evaluated against, so it's
-the highest-quality input for the normative model. Falls back to the automated
-cascade prediction (_seg_fine) only for subjects with no manual label (the
-expansion cohort segmented purely by inference).
+For each subject, uses the manual/expert segmentation (nnU-Net labelsTr/labelsTs).
 
 Sources, in priority order:
   1. manual ground truth : <gt-dir>/<SUBJECT>.nii.gz          (labelsTr, labelsTs)
@@ -14,8 +10,8 @@ Other inputs unchanged:
   - native STIR : <images-dir>/<SUBJECT>_0000.nii.gz
   - vertebrae   : <tss-dir>/<SUBJECT>/tss_output/step2_output/*.nii.gz (1mm ISO)
 
-manifest.csv gets a `seg_source` column ("manual_gt" or "nnunet_pred") so you
-can report the split and, for subjects with BOTH, later compute prediction
+manifest.csv gets a `seg_source` column ("manual_gt" or "nnunet_pred") to
+report the split and, for subjects with both, later compute prediction
 quality (Dice) against the manual label if useful.
 
 Run:
