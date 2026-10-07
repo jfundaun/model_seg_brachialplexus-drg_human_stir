@@ -8,7 +8,7 @@ nnUNet_preprocessed = os.environ["nnUNet_preprocessed"]
 SPLITS_F = f"{nnUNet_preprocessed}/Dataset201_DRGPlexusCoarse/splits_final.json"
 IMG_DIR  = f"{nnUNet_raw}/Dataset201_DRGPlexusCoarse/imagesTr"
 IMG_TS   = f"{nnUNet_raw}/Dataset201_DRGPlexusCoarse/imagesTs"
-OUT_BASE = "/scratch/users/jfundaun/bpseg/derivatives/stage1_crossval_preds"
+OUT_BASE = "/.../derivatives/stage1_crossval_preds"
 FINAL    = f"{OUT_BASE}/merged"
 
 available_folds = [int(f) for f in sys.argv[1].split()]
