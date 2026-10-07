@@ -1,20 +1,9 @@
 #!/usr/bin/env python3
 """
-WITHIN-SUBJECT signal normalization.
-
-Every structure's STIR signal will later be divided by ONE per-subject
-reference: the mean STIR intensity across that subject's C5, C6, C7 and T1
-vertebral bodies (segmented by TotalSpineSeg). This is a scanner-agnostic
-internal reference -- it removes coil/gain/sequence-scaling differences
-*before* any cross-subject comparison, so the normalization is done within
-the individual, not across the population. (Cross-population comparison is
-z-scoring, which happens later in script 03.)
-
-Statistical role: this is the denominator of SI_norm = mean(struct)/ref.
+Within-subject signal normalization.
 
 Input : STIR image + TotalSpineSeg segmentation (step2_output).
-Output: one-row CSV with the subject's reference intensity (+ per-body means
-        for QC). Script 02 reads this file.
+Output: one-row CSV with the subject's reference intensity (+ per-body means for QC). Script 02 reads this file.
 
 Run   : python 01_signal_normalization.py \
             --image sub-01_STIR.nii.gz \
