@@ -64,7 +64,6 @@ def resample_to_ref(src_img, ref_img):
 def save_clean_seg(data, ref_img, path):
     """
     Save segmentation with zeroed scl_slope/scl_inter.
-    Prevents float corruption on reload (1 → 1.0000152587890625 bug).
     """
     arr = data.astype(np.uint8)
     hdr = ref_img.header.copy()
