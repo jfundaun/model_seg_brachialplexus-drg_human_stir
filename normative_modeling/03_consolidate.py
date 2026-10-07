@@ -1,19 +1,9 @@
 #!/usr/bin/env python3
 """
-The R normative pipeline (bpseg_normative_v3.R) does its OWN multi-cohort ID
-crosswalk and healthy/patient split from merged_demographics_2026.csv, so this
-script no longer joins demographics or writes hc/patient splits. It just does
-the raw consolidation + QC that R consumes:
-
-    idps_all_long.csv   one row per subject per structure (the IDPs)
-    normref_all.csv     per-subject vertebral reference
-    qc_report.csv       per-subject completeness + plausibility flags
-                        (complete_16, has_SI, n_zero_or_neg_vol, n_implausible_vol)
-
 Run:
     python 04_consolidate.py \
-        --idp-dir /scratch/users/jfundaun/bpseg/scripts/totalspineseg/idps \
-        --out-dir /scratch/users/jfundaun/bpseg/derivatives/bp_totalspineseg_analysis
+        --idp-dir /x \
+        --out-dir /x
 """
 import argparse, glob, os, sys
 import pandas as pd
