@@ -48,7 +48,7 @@ python3 "${SCRIPTS_DIR}/update_channel1.py"
 echo "Preprocessing Dataset202..."
 PREPROC_202="${nnUNet_preprocessed}/Dataset202_DRGPlexusFine"
 TS=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="/scratch/users/jfundaun/bpseg/nnunet_cascade/preprocessed_backups"
+BACKUP_DIR="/.../nnunet_cascade/preprocessed_backups"
 mkdir -p "$BACKUP_DIR"
 
 for sub in nnUNetPlans_3d_fullres nnUNetResEncUNetMPlans_3d_fullres gt_segmentations splits_final.json; do
