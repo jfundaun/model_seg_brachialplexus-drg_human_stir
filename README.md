@@ -1,6 +1,6 @@
 # BPSeg
 
-Automatic segmentation of the bilateral C5 to C8 brachial plexus nerve roots and dorsal root ganglia (DRG) from T2 SPACE STIR MRI using a two-stage cascaded nnU-Net model.
+Automatic segmentation of the bilateral C5 to C8 brachial plexus nerve roots and dorsal root ganglia (DRG) from T2 STIR MRI using a two-stage cascaded nnU-Net model.
 
 Repository: `jfundaun/model_seg_brachialplexus-drg_human_stir`. Trained weights are distributed as GitHub release assets under tag `r20260723`.
 
@@ -18,11 +18,11 @@ Repository: `jfundaun/model_seg_brachialplexus-drg_human_stir`. Trained weights 
 - [Contact](#contact)
 
 ## Model description
-BPSeg targets small, bilateral neural structures that span a large field of view. Such segmentations are challenging for a single network, so the model uses a two-stage cascade:
+BPSeg targets small, bilateral neural structures that span a large field of view. Such segmentations can be challenging for a single network, so the model uses a two-stage cascade:
 - **Stage 1 (Dataset201, coarse):** a 3-class segmentation (background, DRG, plexus) that localizes the target region.
 - **Stage 2 (Dataset202, fine):** a 16-class bilateral segmentation. It takes two input channels, the image and the Stage 1 prediction, using the coarse map as a spatial prior.
 
-Both stages use the nnU-Net v2 `3d_fullres` configuration with the ResEncUNet-M planner (`nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres`) and are released as 5-fold ensembles. Inference applies a post-processing step that splits any left/right merged structures by world-space (RAS) x-coordinate. Five-fold cross-validation gave a median test Dice of 0.90.
+Both stages use the nnU-Net v2 `3d_fullres` configuration with the ResEncUNet-M planner (`nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres`) and are released as 5-fold ensembles. Inference applies a post-processing step that splits any left/right merged structures by world-space (RAS) x-coordinate. 
 
 ## List of classes
 The mapping is also in the `dataset.json` inside each Dataset202 archive.
@@ -39,7 +39,7 @@ The mapping is also in the `dataset.json` inside each Dataset202 archive.
 | 8 | DRG_C8_L | 16 | BP_C8_L |
 
 ## Datasets
-Trained on approximately 400 coronal T2 SPACE STIR scans from three sites (Oxford, Brighton, Stanford), acquired on Siemens and GE scanners. The train/test split is in `participants/participant_ids_train_test.csv`.
+Trained on approximately 400 T2 STIR scans from three sites (Oxford, UK; Brighton, UK; Stanford, CA), acquired on Siemens and GE scanners. The train/test split is in `participants/participant_ids_train_test.csv`.
 
 ## Dependencies
 - Python 3.9 or later
@@ -106,7 +106,7 @@ export nnUNet_results=/path/to/results
 bash training/submit_pipeline_v2.sh
 ```
 
-`prepare_nnunet_data.py` builds the raw dataset from a CSV data dictionary (`ID`, `vol_path`, `seg_path`, `subset`, `center`). `submit_pipeline_v2.sh` then chains, with `afterok` dependencies: Dataset201 preprocessing, Stage 1 5-fold training, Phase 2, and Stage 2 5-fold training.
+`prepare_nnunet_data.py` builds the raw dataset from a CSV data dictionary. `submit_pipeline_v2.sh` then chains, with `afterok` dependencies: Dataset201 preprocessing, Stage 1 5-fold training, Phase 2, and Stage 2 5-fold training.
 
 Phase 2 (`phase2_v2.sh`) transitions between stages. `crossval_preds.py` generates a Stage 1 prediction for each training case from the folds that did not see it, and `update_channel1.py` writes those predictions into the Stage 2 channel-1 inputs, replacing the ground-truth coarse initialization so Stage 2 trains under inference-like conditions.
 
