@@ -74,10 +74,6 @@ def remap_fine(d):
 def save_image_nifti(img, path): nib.save(img, path)
 
 def save_seg_nifti(data, ref_img, path, dtype=np.uint8):
-    """
-    FIX: Clears scl_slope/scl_inter to prevent float corruption.
-    Original bug: scl_slope=nan caused 1 -> 1.0000152587890625 on reload.
-    """
     new_hdr = ref_img.header.copy()
     new_hdr.set_data_dtype(dtype)
     new_hdr['scl_slope'] = 0.0   # 0 = disabled per NIfTI-1 spec
