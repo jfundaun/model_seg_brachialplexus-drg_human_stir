@@ -2,8 +2,8 @@
 """
 Run:
     python 04_consolidate.py \
-        --idp-dir /x \
-        --out-dir /x
+        --idp-dir /.../ \
+        --out-dir /.../
 """
 import argparse, glob, os, sys
 import pandas as pd
