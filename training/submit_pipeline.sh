@@ -1,30 +1,15 @@
 #!/bin/bash
 # =============================================================
-# submit_pipeline_v2.sh
-#
-# Full retraining pipeline chained with SLURM dependencies:
-#
-#   run_prepare_data.sh  (rebuild raw/ from fresh CSV + seg files)
-#       └─> preproc_201_v2.sh  (self-checking Dataset201 preprocessing)
-#               └─> train_201_fold.sh  (array 0-4, 48h, Ampere-only)
-#                       └─> phase2_v2.sh  (crossval preds + ch1 update
-#                                          + Dataset202 preprocessing)
-#                               └─> train_202_fold.sh  (array 0-4, 48h)
-#
-# Dataset: 314 train / 42 test
-#
-# Run from: /scratch/users/jfundaun/bpseg/scripts/final_complete_18april2026
 # Usage:
-#   bash submit_pipeline_v2.sh
+#   bash submit_pipeline.sh
 # =============================================================
 
 set -euo pipefail
 
-cd /scratch/users/jfundaun/bpseg/scripts/final_complete_18april2026
+cd /X
 
 echo "=================================================="
 echo "  Submitting full retraining pipeline"
-echo "  Dataset: 314 train / 42 test"
 echo "=================================================="
 
 JOB_PREP=$(sbatch --parsable run_prepare_data.sh)
