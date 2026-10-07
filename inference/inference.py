@@ -6,7 +6,7 @@ Stage 1: Dataset201 (coarse, single-channel T2 input)
 Stage 2: Dataset202 (fine 16-class, 2-channel: T2 + coarse seg)
 
 Usage:
-    python inference_v2_fixed.py --subset all \\
+    python inference.py --subset all \\
         --output /file/path/here
 """
 
