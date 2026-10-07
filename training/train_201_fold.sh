@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=train_201
-#SBATCH --output=/scratch/users/jfundaun/bpseg/logs/train_201_f%a_%j.log
-#SBATCH --error=/scratch/users/jfundaun/bpseg/logs/train_201_f%a_%j.err
+#SBATCH --output=/.../logs/train_201_f%a_%j.log
+#SBATCH --error=/.../logs/train_201_f%a_%j.err
 #SBATCH --array=0-4
 #SBATCH --partition=gpu
-#SBATCH --account=smackey
+#SBATCH --account=X
 #SBATCH --mem=48G
 #SBATCH --gres=gpu:1
 #SBATCH --time=48:00:00
@@ -14,9 +14,9 @@
 set -euo pipefail
 FOLD=${SLURM_ARRAY_TASK_ID}
 
-export nnUNet_raw="/scratch/users/jfundaun/bpseg/nnunet_cascade/raw"
-export nnUNet_preprocessed="/scratch/users/jfundaun/bpseg/nnunet_cascade/preprocessed"
-export nnUNet_results="/scratch/users/jfundaun/bpseg/nnunet_cascade/results"
+export nnUNet_raw="/.../nnunet_cascade/raw"
+export nnUNet_preprocessed="/.../nnunet_cascade/preprocessed"
+export nnUNet_results="/.../nnunet_cascade/results"
 
 GPU=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1)
 echo "Training Dataset201 fold ${FOLD} on ${GPU} at $(date) on $(hostname)"
