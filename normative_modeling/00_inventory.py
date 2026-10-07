@@ -17,11 +17,11 @@ quality (Dice) against the manual label if useful.
 Run:
     python 00_inventory.py \
       --tss-dir  /scratch/users/jfundaun/bpseg/derivatives/totalspineseg \
-      --images-dir /scratch/.../Dataset202_DRGPlexusFine/imagesTr \
-                   /scratch/.../Dataset202_DRGPlexusFine/imagesTs \
-      --gt-dirs    /scratch/.../Dataset202_DRGPlexusFine/labelsTr \
-                   /scratch/.../Dataset202_DRGPlexusFine/labelsTs \
-      --seg16-dir  /scratch/.../cascade_results_final/1July2026/final_segmentations \
+      --images-dir /.../Dataset202_DRGPlexusFine/imagesTr \
+                   /.../Dataset202_DRGPlexusFine/imagesTs \
+      --gt-dirs    /.../Dataset202_DRGPlexusFine/labelsTr \
+                   /.../Dataset202_DRGPlexusFine/labelsTs \
+      --seg16-dir  /.../cascade_results_final/1July2026/final_segmentations \
       --out manifest.csv
 """
 import argparse
