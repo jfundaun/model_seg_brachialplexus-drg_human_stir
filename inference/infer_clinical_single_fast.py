@@ -462,7 +462,7 @@ def main():
         folds_201 = check_folds(201, cfg["coarse_folds"])
         folds_202 = check_folds(202, cfg["fine_folds"])
 
-        # build BOTH predictors ONCE (this is where the speedup lives)
+        # build both predictors once
         print("\n[BUILD] Initialising coarse predictor (Dataset201)...")
         t0 = time.perf_counter()
         predictor_coarse = build_predictor(201, folds_201, cfg["tta"],
