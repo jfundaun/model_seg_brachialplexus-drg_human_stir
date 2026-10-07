@@ -1,15 +1,6 @@
 #!/usr/bin/env python3
 """
-Per-structure image-derived phenotypes for the 16 structures (8 DRGs + 8 roots,
-bilateral C5-C8).
-
-Each structure's pyRadiomics call (Mean, GLCM JointEntropy) runs in an ISOLATED
-SUBPROCESS via extract_one_label.py. This is required because pyRadiomics can
-segfault natively on certain masks -- a native crash cannot be caught by a
-Python try/except, and would otherwise kill this entire script (losing every
-remaining structure for that subject). Running it as a subprocess means any
-failure, exception OR crash, becomes just a return code the parent can log and
-skip past.
+Per-structure image-derived phenotypes for the 16 structures (8 DRGs + 8 roots, bilateral C5-C8).
 
 What is computed here (the directly-measurable IDPs):
     SI_norm            #1  all 16   firstorder Mean / C5-T1 reference   [2D+3D]
@@ -61,7 +52,7 @@ STRUCTURE_LABELS = {
     13: ("L", "C5", "root"), 14: ("L", "C6", "root"),
     15: ("L", "C7", "root"), 16: ("L", "C8", "root"),
 }
-GLCM_BIN_WIDTH = 5  # STIR intensity bin for GLCM; keep fixed across the cohort.
+GLCM_BIN_WIDTH = 5 
 
 
 def extract_one_label_safe(image_path, seg_path, label, subject_id, side, level, stype):
