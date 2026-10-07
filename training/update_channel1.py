@@ -17,11 +17,11 @@ from scipy.ndimage import map_coordinates
 from datetime import datetime
 
 # ============================================================
-# PATHS — edit to match your environment
+# PATHS 
 # ============================================================
-BASE     = "/scratch/users/jfundaun/bpseg/nnunet_cascade/raw/Dataset202_DRGPlexusFine"
-PRED_DIR = "/scratch/users/jfundaun/bpseg/derivatives/stage1_crossval_preds/merged"
-BACKUP_DIR = "/scratch/users/jfundaun/bpseg/derivatives/channel1_backup_gt_coarse"
+BASE     = "/.../nnunet_cascade/raw/Dataset202_DRGPlexusFine"
+PRED_DIR = "/.../derivatives/stage1_crossval_preds/merged"
+BACKUP_DIR = "/.../derivatives/channel1_backup_gt_coarse"
 # ============================================================
 def reorient_to_ras(img):
     """Reorient to RAS+ canonical orientation."""
@@ -36,8 +36,6 @@ def resample_to_ref(src_img, ref_img):
     """
     if (np.allclose(src_img.affine, ref_img.affine, atol=1e-3) and
             src_img.shape[:3] == ref_img.shape[:3]):
-        # Force ref header/affine so saved _0001 has EXACT _0000 geometry
-        # (avoids ~1e-6 zoom mismatch that nnUNet rejects)
         return nib.Nifti1Image(
             np.round(src_img.get_fdata()).astype(np.uint8),
             ref_img.affine, ref_img.header)
@@ -75,10 +73,6 @@ def save_clean_seg(data, ref_img, path):
     hdr["scl_inter"] = 0.0
     hdr.set_qform(ref_img.affine, code=max(1, int(hdr["qform_code"])))
     hdr.set_sform(ref_img.affine, code=max(1, int(hdr["sform_code"])))
-    # Force pixdim to EXACTLY match reference zooms. nnUNet reads spacing
-    # from pixdim (get_zooms), not the affine, and reconstructing an image
-    # recomputes pixdim from affine column norms -> tiny float drift
-    # (0.4 -> 0.39999586) that nnUNet rejects as a spacing mismatch.
     out = nib.Nifti1Image(arr, ref_img.affine, hdr)
     ref_zooms = ref_img.header.get_zooms()[:3]
     z = list(out.header.get_zooms())
@@ -96,22 +90,6 @@ def verify_clean(path):
 
 
 def find_pred_exact_then_fuzzy(sub_id, pred_dir):
-    """
-    Find Stage 1 prediction for sub_id.
-
-    Exact patterns tried first (in order):
-      1. <sub_id>.nii.gz
-      2. <sub_id>_seg_coarse.nii.gz
-      3. <sub_id>_seg.nii.gz
-
-    Fuzzy fallback: *<sub_id>*.nii.gz
-      - If exactly 1 match: use it, no warning
-      - If >1 match: use first alphabetically, WARN (ambiguous)
-      - If 0 matches: return None
-
-    This prevents the original bug where sub_id='003' matched
-    '003_010_t2.nii.gz', '003_020_t2.nii.gz' etc. arbitrarily.
-    """
     pred_dir = Path(pred_dir)
 
     for name in (f"{sub_id}.nii.gz",
@@ -149,7 +127,7 @@ def main():
     print(f"\nStage 1 predictions available: {len(pred_files)}")
 
     total = ok = missing = bad = fuzzy_warn = 0
-    kept_gt = []   # subjects that kept GT coarse — train/inference mismatch risk
+    kept_gt = []  
 
     for split in ["imagesTr", "imagesTs"]:
         ch1_files = sorted(glob.glob(f"{BASE}/{split}/*_0001.nii.gz"))
@@ -179,7 +157,7 @@ def main():
             pred_img = reorient_to_ras(nib.load(pred_path))
             ref_img  = reorient_to_ras(nib.load(ch0_path))  # MRI _0000
 
-            # Resample Stage 1 pred to MRI space (both already RAS+)
+            # Resample Stage 1 pred to MRI space
             pred_resampled = resample_to_ref(pred_img, ref_img)
             pred_data = np.round(
                 pred_resampled.get_fdata(dtype=np.float32)).astype(np.uint8)
