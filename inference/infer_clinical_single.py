@@ -29,7 +29,6 @@ from scipy.ndimage import label as scipy_label
 # ============================================================
 
 # final_results_12Jne2026 contains both Dataset201_... and Dataset202_...
-# as sibling directories -- no symlink unification needed.
 NNUNET_RESULTS = (
     "/path_here"
 )
@@ -137,7 +136,7 @@ def sanitize_case_id(filename):
 
 
 # ============================================================
-# BILATERAL LATERALIZATION (BUG E FIX)
+# BILATERAL LATERALIZATION
 # ============================================================
 
 def lateralize_bilateral_structures(seg_data, affine):
@@ -322,7 +321,7 @@ def main(input_path, output_path):
         if not fine_src.exists():
             raise RuntimeError(f"Stage-2 output missing for {cid}: {fine_src}")
 
-        # ── Lateralize bilateral structures (BUG E fix) ─────────────────────
+        # ── Lateralize bilateral structures ─────────────────────
         print("\n[LATERALIZE] Checking for merged bilateral structures...")
         pred_img  = nib.load(str(fine_src))
         pred_data = np.round(pred_img.get_fdata(dtype=np.float32)).astype(int)
