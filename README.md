@@ -39,7 +39,7 @@ The mapping is also in the `dataset.json` inside each Dataset202 archive.
 | 8 | DRG_C8_L | 16 | BP_C8_L |
 
 ## Datasets
-Trained on approximately 400 T2 STIR scans from three sites (Oxford, UK; Brighton, UK; Stanford, CA), acquired on Siemens and GE scanners. The train/test split is in `participants/participant_ids_train_test.csv`.
+Trained on approximately 400 T2 STIR scans from three sites (Oxford, UK; Brighton, UK; Stanford, CA), acquired on Siemens and GE scanners.
 
 ## Dependencies
 - Python 3.9 or later
